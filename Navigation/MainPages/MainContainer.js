@@ -23,7 +23,6 @@ export default function MainContainer() {
                 initialRouteName={loadsName}
                 screenOptions={({route}) => ({
                     tabBarIcon: ({focused, color, tintColor}) => {
-                        let iconName;
                         let rn = route.name;
 
                         if (rn === loadsName) {
@@ -51,15 +50,25 @@ export default function MainContainer() {
                         // }
                         
                     },
-                })}
-                tabBarOptions= {{
-                    activeTintColor: 'tomato', //For changing tint colors
-                    inactiveTintColor: 'gray',
-                    labelStyle: { paddingBottom: 10, fontSize: 10 },
-                    style: { padding: 10, height: 70}
-                }}
-                
-                >
+                    
+                    "tabBarActiveTintColor": "",
+                    "tabBarInactiveTintColor": "gray",
+                    "tabBarLabelStyle": {
+                        "paddingBottom": 10,
+                        "fontSize": 10,
+                        "color": "white",
+                        
+                    },
+                    "tabBarStyle": [
+                        {
+                            "display": "flex",
+                            "backgroundColor": "#16234e",
+                            "padding": 10,
+                            "height": 70,
+                        },
+                        null
+                    ]
+                })}>
                 
                 <Tab.Screen name={loadsName} component={LoadsScreen}/>
                 <Tab.Screen name={myProposalsName} component={MyProposalsScreen}/>
