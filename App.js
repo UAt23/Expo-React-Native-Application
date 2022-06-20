@@ -18,16 +18,16 @@ const NavScreen = () => {
 
 function App() {
   return (
-    <MainContainer/>
-    // <NavigationContainer>
-    //   <Stack.Navigator>
-    //     <Stack.Screen
-    //       name="MainContainer"
-    //       component={MainContainer}
-    //       options={{headerShown: false}}
-    //     />
-    //   </Stack.Navigator>
-    // </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="MainContainer"
+          component={MainContainer}
+          options={{headerShown: false}}
+          
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
 
     // <View style={[styles.mainContainer]}>
     //   <Text style={[styles.textStyle]}>Hello</Text>
