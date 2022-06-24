@@ -86,7 +86,11 @@ const styles = StyleSheet.create ({
         width: width * 0.9  ,
         backgroundColor: 'white',
         borderRadius: 24,
-        padding: 20,
+        
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 25,
+        paddingBottom: 25,
         marginVertical: 10,
         
     },
@@ -112,14 +116,14 @@ const styles = StyleSheet.create ({
     inspectButton: {
         flexDirection: 'row',
         backgroundColor: '#36d42d',
-        paddingLeft: 15,
-        paddingRight: 15,
-        paddingTop: 5,
-        paddingBottom: 5,
+        paddingLeft: Platform.OS === 'ios' ? 10 : 15,
+        paddingRight: Platform.OS === 'ios' ? 10 : 15,
+        paddingTop: Platform.OS === 'ios' ? 2 : 5,
+        paddingBottom: Platform.OS === 'ios' ? 2 : 5,
         borderRadius: 48,
         position: 'absolute',
-        right: Platform.OS === 'ios' ? 30 : 20,
-        bottom: Platform.OS === 'ios' ? 10 : 20,
+        right: Platform.OS === 'ios' ? 10 : 20,
+        bottom: Platform.OS === 'ios' ? 2 : 10,
         
     },
     inspectText: {
