@@ -1,6 +1,7 @@
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
+import { Dimensions } from 'react-native';
 
 import dateLogo from '../../../../assets/loads/dateLogo.png';
 import locationLogo from '../../../../assets/loads/locationLogo.png';
@@ -22,8 +23,11 @@ const LoadData = {
 
 
 
+const {width, height} = Dimensions.get('window');
+
 const LoadCard = () => {
 
+    
     const navigation = useNavigation();
     const onInspectPressed = () => {
         navigation.navigate('Inspect')
@@ -79,7 +83,7 @@ const LoadCard = () => {
 
 const styles = StyleSheet.create ({
     container: {
-        width: 380  ,
+        width: width * 0.9  ,
         backgroundColor: 'white',
         borderRadius: 24,
         padding: 20,
