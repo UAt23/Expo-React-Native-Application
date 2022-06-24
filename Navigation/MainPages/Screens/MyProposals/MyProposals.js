@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, NavigationContainer} from 'react-native';
 import LoadCard from '../Loads/LoadCard';
-
+import { Dimensions } from 'react-native';
+const {width, height} = Dimensions.get('window');
 
 export default function MyProposalsScreen({navigation}) {
     return(
@@ -13,9 +14,10 @@ export default function MyProposalsScreen({navigation}) {
 
 const styles = StyleSheet.create({
     loadsContainer: { 
+        height: height,
         alignItems: 'center', 
         backgroundColor: '#eff0f7',
         padding: 20,
-        marginTop: 50,
+        paddingTop: 50,
     }
-})
+});

@@ -52,6 +52,7 @@ export default function MainContainer() {
                         "color": "white",
                         
                     },
+                    "tabBarHideOnKeyboard": true,
                     "tabBarStyle": [
                         {
                             "display": "flex",

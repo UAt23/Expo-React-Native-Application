@@ -6,6 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import LoadCard from './LoadCard';
 import Inspect from './Inspect';
 
+import { Dimensions } from 'react-native';
+const {width, height} = Dimensions.get('window');
+
 const Load = createStackNavigator();
 
 const LoadCards = () => {
@@ -42,11 +45,12 @@ const LoadsScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    loadsContainer: { 
+    loadsContainer: {
+        height: height,
         alignItems: 'center', 
         backgroundColor: '#eff0f7',
         padding: 20,
-        marginTop: 50,
+        paddingTop: 50,
     }
 })
 

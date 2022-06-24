@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     headerOne: {
         color: "white",
         flex: 0.2,
-        fontSize: 24,
+        fontSize: Platform.OS === 'ios' ? 22 : 24,
         textAlign: 'center',
         padding: 4,
         fontWeight: "300",

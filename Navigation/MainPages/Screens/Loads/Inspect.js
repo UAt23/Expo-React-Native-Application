@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, KeyboardAvoidingView} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 const Inspect = () => {
@@ -11,50 +11,53 @@ const Inspect = () => {
     }
 
     return (
-        <View style={[styles.root, {height: height * 0.95}]}>
-            <View style={styles.screenContent}>
-                <View style={{flex: 0.80, justifyContent: 'space-between'}}>
-                    <View>
-                        <Text style={styles.headerTwo}>Çıkış Adres:</Text>
+        <KeyboardAvoidingView 
+            behavior='position'>
+            <View style={[styles.root, {height: height * 0.95}]}>
+                <View style={styles.screenContent}>
+                    <View style={{flex: 0.80, justifyContent: 'space-between'}}>
+                        <View>
+                            <Text style={styles.headerTwo}>Çıkış Adres:</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Varış Adres:</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Yük Tipi:</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Yük Ağırlığı:</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Araç Tipi</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Dorse Tipi</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Hacim:</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>En düşük teklif:</Text>
+                        </View>
                     </View>
                     <View>
-                        <Text style={styles.headerTwo}>Varış Adres:</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>Yük Tipi:</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>Yük Ağırlığı:</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>Araç Tipi</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>Dorse Tipi</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>Hacim:</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>En düşük teklif:</Text>
-                    </View>
-                </View>
-                <View>
-                    <View style={styles.offer}>
-                        <TextInput  
-                            style={styles.phoneInput}
-                            keyboardType= 'number-pad'
-                        />
-                        <Text style={styles.headerThree}>**Bu ilana 2 teklif verilmiştir. En düşük teklif 2000TL.</Text>
-                    </View>
-                    <View style={styles.offer}>
-                        <Pressable onPress={onGiveOfferPressed} style={styles.button}>
-                            <Text style={styles.buttonInner}>Teklif Ver</Text>
-                        </Pressable>
+                        <View style={styles.offer}>
+                            <TextInput  
+                                style={styles.phoneInput}
+                                keyboardType= 'number-pad'
+                            />
+                            <Text style={styles.headerThree}>**Bu ilana 2 teklif verilmiştir. En düşük teklif 2000TL.</Text>
+                        </View>
+                        <View style={styles.offer}>
+                            <Pressable onPress={onGiveOfferPressed} style={styles.button}>
+                                <Text style={styles.buttonInner}>Teklif Ver</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
         
     );
 }
