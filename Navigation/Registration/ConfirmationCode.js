@@ -6,52 +6,48 @@ import { useNavigation } from '@react-navigation/native';
 
 import Logo from '../../assets/registeration/kamyongo_logo.png';
 
-const UserAuth = () => {
-    const {height} = useWindowDimensions();
 
+
+const ConfirmationCodeScreen = () => {
+    const {height} = useWindowDimensions();
+    const [code, setCode] = React.useState('');
 
     const onButtonPressed = () => {
-        navigation.navigate('MainContainer')
+
+        navigation.navigate('UserAuth')
     }
-    
+
     const navigation = useNavigation();
 
     return (
         <View style={[styles.root, {height: height}]}>
-            <Image 
+            {/* <Image 
                 source={Logo} 
                 style={[styles.logo, {height: height * 0.15},]} 
                 resizeMode="contain" 
-            />
+            /> */}
             <View style={styles.screenContent}>
-                <View style={styles.inputFields}>
+                {/* <Text style={styles.headerOne}>Türkiye'nin en gelişmiş kamyoncu platformu </Text> */}
+                <View style={{flex: 1, justifyContent: 'space-between'}}>
                     <View>
-                        <Text style={styles.headerTwo}>İsim </Text>
-                        <TextInput  style={styles.phoneInput}/>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>Soyisim </Text>
-                        <TextInput  style={styles.phoneInput}/>
-                    </View>
-                    <View>
-                        <Text style={styles.headerTwo}>TC No </Text>
-                        <TextInput  
+                        <Text style={styles.headerTwo}>SMS ile gelen kodu giriniz</Text>
+                        <TextInput 
                             style={styles.phoneInput}
                             keyboardType= 'number-pad'
                         />
                     </View>
-                </View>
-                <View>
-                    <Pressable onPress={onButtonPressed} style={styles.button}>
-                        <Text style={styles.buttonInner}>BAŞLA</Text>
-                    </Pressable>
+                    <View>
+                        <Pressable onPress={onButtonPressed} style={styles.button}>
+                            <Text style={styles.buttonInner}>TAMAM</Text>
+                        </Pressable>
+                    </View>
                 </View>
             </View>
         </View>
         
 
     );
-}
+};
 
 const styles = StyleSheet.create({
     root: {
@@ -70,11 +66,10 @@ const styles = StyleSheet.create({
     },
     headerOne: {
         color: "white",
+        flex: 0.2,
         fontSize: 24,
         textAlign: 'center',
         padding: 4,
-        marginRight: 10,
-        marginLeft: 10,
         fontWeight: "300",
     },
     headerTwo: {
@@ -89,16 +84,12 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 12,
         height: 50,
-        paddingLeft: 20,
-        marginBottom: 10,
+        paddingLeft: 20
     },
     screenContent: {
         flex: 0.8,
         justifyContent: 'space-between',
         width: '80%',
-        
-    },
-    inputFields: {
         
     },
     button: {
@@ -123,4 +114,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default UserAuth
+export default ConfirmationCodeScreen;

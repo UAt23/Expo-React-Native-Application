@@ -5,21 +5,35 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
 import  MainContainer from './Navigation/MainPages/MainContainer'
+import  PhoneScreen from './Navigation/Registration/Phone'
+import  ConfirmationCodeScreen from './Navigation/Registration/ConfirmationCode'
+import UserAuth from './Navigation/Registration/UserAuth';
 
 const Stack = createStackNavigator();
-
-const NavScreen = () => {
-  return (
-    <View style={[styles.mainContainer]}>
-      <Text style={[styles.textStyle]}>Hello</Text>
-    </View>
-  )
-}
 
 function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="PhoneScreen"
+          component={PhoneScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ConfirmationCode"
+          component={ConfirmationCodeScreen}
+          options={{headerShown: true, 
+            headerStyle: {backgroundColor: '#1F316E'}, 
+            headerTitleStyle: {color: 'white'},
+            headerTintColor: 'white',
+          }}
+        />
+        <Stack.Screen
+          name="UserAuth"
+          component={UserAuth}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="MainContainer"
           component={MainContainer}
@@ -28,10 +42,6 @@ function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
-
-    // <View style={[styles.mainContainer]}>
-    //   <Text style={[styles.textStyle]}>Hello</Text>
-    // </View>
   );
 }
 

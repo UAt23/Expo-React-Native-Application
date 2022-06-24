@@ -5,9 +5,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 
-import LoadsScreen from './Screens/Loads'
-import MyProposalsScreen from './Screens/MyProposals'
-import SettingsScreen from './Screens/Settings'
+import LoadsScreen from './Screens/Loads/Loads'
+import MyProposalsScreen from './Screens/MyProposals/MyProposals'
+import SettingsScreen from './Screens/Settings/Settings'
 
 //Screen Names
 const loadsName = 'Loads';
@@ -22,7 +22,7 @@ export default function MainContainer() {
             <Tab.Navigator
                 initialRouteName={loadsName}
                 screenOptions={({route}) => ({
-                    tabBarIcon: ({focused, color, tintColor}) => {
+                    tabBarIcon: ({tintColor}) => {
                         let rn = route.name;
 
                         if (rn === loadsName) {
@@ -41,13 +41,6 @@ export default function MainContainer() {
                                 style={{ height: 25, width: 25, tintColor: tintColor }}
                             />;
                         }
-                        // if (rn === loadsName) {
-                        //     iconName = focused ? 'home' : 'home-outline'
-                        // } else if (rn === myProposalsName) {
-                        //     iconName = focused ? 'list' : 'list-outline'
-                        // } else if (rn === settingsName) {
-                        //     iconName = focused ? 'settings' : 'settings-outline'
-                        // }
                         
                     },
                     "headerShown": false,
@@ -74,10 +67,7 @@ export default function MainContainer() {
                 <Tab.Screen name={myProposalsName} component={MyProposalsScreen}/>
                 <Tab.Screen name={settingsName} component={SettingsScreen}/>
 
-            </Tab.Navigator>
-
-                
-                
+            </Tab.Navigator>    
         </NavigationContainer>
     )
 }
