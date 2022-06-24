@@ -118,8 +118,8 @@ const styles = StyleSheet.create ({
         paddingBottom: 5,
         borderRadius: 48,
         position: 'absolute',
-        right: 20,
-        bottom: 20,
+        right: Platform.OS === 'ios' ? 30 : 20,
+        bottom: Platform.OS === 'ios' ? 10 : 20,
         
     },
     inspectText: {
