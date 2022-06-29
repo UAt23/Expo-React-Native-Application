@@ -18,13 +18,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to let user take a photo of his personal documents.",
+        "NSLocationWhenInUseUsageDescription": "This app uses the location to filter the post shared in the city it currently is."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [ "CAMERA", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION" ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

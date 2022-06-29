@@ -34,7 +34,7 @@ const LoadCard = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <Pressable style={styles.container} onPress={onInspectPressed}>
             <View style={styles.innerLines}>
                 <Image 
                     source={dateLogo} 
@@ -77,38 +77,39 @@ const LoadCard = () => {
                     <Text style={styles.inspectText}>İncele</Text>
                 </Pressable>
             </View>
-        </View>
+        </Pressable>
     )
 }
 
 const styles = StyleSheet.create ({
     container: {
-        width: width * 0.9  ,
+        width: width * 0.9,
+        height: height * 0.18,
         backgroundColor: 'white',
         borderRadius: 24,
         paddingLeft: 20,
         paddingRight: 20,
-        paddingTop: 25,
-        paddingBottom: 25,
-        marginVertical: 10,
+        paddingTop: 15,
+        paddingBottom: 15,
+        marginVertical: 5,
         
     },
     innerLines: {
         flexDirection: 'row',
         flex: 0,
-        marginVertical: 3,
+        marginVertical: 1,
 
 
     },
     logos: {
-        height: 22,
-        width:20,
+        height: 20,
+        width:15,
 
     },
     text: {
         marginLeft: 10,
         color: '#16234e',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '600',
 
     },

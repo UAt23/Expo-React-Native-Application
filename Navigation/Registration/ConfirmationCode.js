@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 
-import Logo from '../../assets/registeration/kamyongo_logo.png';
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 
+import Logo from '../../assets/registeration/kamyongo_logo.png';
 
 
 const ConfirmationCodeScreen = () => {
@@ -20,30 +25,26 @@ const ConfirmationCodeScreen = () => {
     const navigation = useNavigation();
 
     return (
-        <View style={[styles.root, {height: height}]}>
-            {/* <Image 
-                source={Logo} 
-                style={[styles.logo, {height: height * 0.15},]} 
-                resizeMode="contain" 
-            /> */}
-            <View style={styles.screenContent}>
-                {/* <Text style={styles.headerOne}>Türkiye'nin en gelişmiş kamyoncu platformu </Text> */}
-                <View style={{flex: 1, justifyContent: 'space-between'}}>
-                    <View>
-                        <Text style={styles.headerTwo}>SMS ile gelen kodu giriniz</Text>
-                        <TextInput 
-                            style={styles.phoneInput}
-                            keyboardType= 'number-pad'
-                        />
-                    </View>
-                    <View>
-                        <Pressable onPress={onButtonPressed} style={styles.button}>
-                            <Text style={styles.buttonInner}>TAMAM</Text>
-                        </Pressable>
+        <DismissKeyboard>
+            <View style={[styles.root, {height: height}]}>
+                <View style={styles.screenContent}>
+                    <View style={{flex: 1, justifyContent: 'space-between'}}>
+                        <View>
+                            <Text style={styles.headerTwo}>SMS ile gelen kodu giriniz</Text>
+                            <TextInput 
+                                style={styles.phoneInput}
+                                keyboardType= 'number-pad'
+                            />
+                        </View>
+                        <View>
+                            <Pressable onPress={onButtonPressed} style={styles.button}>
+                                <Text style={styles.buttonInner}>TAMAM</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
+        </DismissKeyboard>
         
 
     );
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
         paddingLeft: 20
     },
     screenContent: {
-        flex: 0.8,
+        flex: 0.85,
         justifyContent: 'space-between',
         width: '80%',
         

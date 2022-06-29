@@ -1,10 +1,16 @@
 import * as React from 'react';
 import { Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
+
 
 const {width, height} = Dimensions.get('window');
 
 const Documents = () => {
+    const navigation = useNavigation();
+    const openCamera = () => {
+        navigation.navigate('CameraComponent')
+    }
 
     return (
         <View style={styles.root}>
@@ -12,69 +18,69 @@ const Documents = () => {
                 <View style={{marginBottom: 20}}>
                     <Text style={styles.sectionHeader}>Kişisel Belgeler</Text>
                     <View style={styles.container}>
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Ehliyet Ön Yüz</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                         <View
                             style={{
                                 borderBottomColor: '#ebebec',
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Ehliyet Arka Yüz</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                         <View
                             style={{
                                 borderBottomColor: '#ebebec',
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Psikoteknik</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                         <View
                             style={{
                                 borderBottomColor: '#ebebec',
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >SRC</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                     </View>
                 </View>    
                 <View>
                     <Text style={styles.sectionHeader}>Firma Belgeleri</Text>
                     <View style={styles.container}>
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Fatura Örneği</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                         <View
                             style={{
                                 borderBottomColor: '#ebebec',
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Yetki Belgesi</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                         <View
                             style={{
                                 borderBottomColor: '#ebebec',
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <View style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Vergi Levhası</Text>
                             <Text style={styles.statusText} >Yüklenmedi</Text>
-                        </View>
+                        </Pressable>
                     </View>
                 </View>  
             </View>

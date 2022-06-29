@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image,  } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
+
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 
@@ -16,7 +17,7 @@ const settingsName = 'Settings';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainContainer() {
+export default function MainContainer({navigation, route}) {
     return(
         <NavigationContainer independent={true}>
             <Tab.Navigator
@@ -66,7 +67,26 @@ export default function MainContainer() {
                 
                 <Tab.Screen name={loadsName} component={LoadsScreen}/>
                 <Tab.Screen name={myProposalsName} component={MyProposalsScreen}/>
-                <Tab.Screen name={settingsName} component={SettingsScreen}/>
+                <Tab.Screen 
+                    name={settingsName} 
+                    component={SettingsScreen} 
+                    options={({route}) => ({tabBarStyle: ((route) => {
+                        const tabHiddenRoutes = ["NewCarInfo","PersonalInfo", "Documents", "CameraComponent"];
+                            
+                
+                        if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
+                            return { display: 'none' }
+                        }
+            
+                        return {
+                            "display": "flex",
+                            "backgroundColor": "#16234e",
+                            "padding": 10,
+                            "height": 70,
+                        }
+                        })(route)
+                    })}
+                />
 
             </Tab.Navigator>    
         </NavigationContainer>

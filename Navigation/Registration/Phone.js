@@ -1,11 +1,18 @@
 import * as React from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, Keyboard,  TouchableWithoutFeedback} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { Dimensions } from 'react-native';
 
 import Logo from '../../assets/registeration/kamyongo_logo.png';
 
+const {width, height} = Dimensions.get('window');
 
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 
 const PhoneScreen = () => {
     const {height} = useWindowDimensions();
@@ -17,31 +24,34 @@ const PhoneScreen = () => {
     const navigation = useNavigation();
     
     return (
-        <View style={[styles.root, {height: height}]}>
-            <Image 
-                source={Logo} 
-                style={[styles.logo, {height: height * 0.15},]} 
-                resizeMode="contain" 
-            />
-            <View style={styles.screenContent}>
-                <Text style={styles.headerOne}>Türkiye'nin en gelişmiş kamyoncu platformu </Text>
-                <View style={{flex: 0.8, justifyContent: 'space-between'}}>
-                    <View>
-                        <Text style={styles.headerTwo}>Telefon numaranızı giriniz: </Text>
-                        <TextInput 
-                            placeholder='(0553__)'  
-                            style={styles.phoneInput}
-                            keyboardType= 'number-pad'
-                        />
-                    </View>
-                    <View>
-                        <Pressable onPress={onButtonPressed} style={styles.button}>
-                            <Text style={styles.buttonInner}>TAMAM</Text>
-                        </Pressable>
+        <DismissKeyboard>
+            <View style={[styles.root, {height: height}]}>
+                <Image 
+                    source={Logo} 
+                    style={[styles.logo, {height: height * 0.15},]} 
+                    resizeMode="contain" 
+                />
+                <View style={styles.screenContent}>
+                    <Text style={styles.headerOne}>Türkiye'nin en gelişmiş kamyoncu platformu </Text>
+                    <View style={{flex: 0.8, justifyContent: 'space-between'}}>
+                        <View>
+                            <Text style={styles.headerTwo}>Telefon numaranızı giriniz: </Text>
+                            <TextInput 
+                                placeholder='(0553__)'  
+                                style={styles.phoneInput}
+                                keyboardType= 'number-pad'
+                            />
+                        </View>
+                        <View>
+                            <Pressable onPress={onButtonPressed} style={styles.button}>
+                                <Text style={styles.buttonInner}>TAMAM</Text>
+                            </Pressable>
+                            <Text style={styles.testimonial}>*Kullanıcı sözleşmesini kabul ediyorum</Text>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
+        </DismissKeyboard>
         
 
     );
@@ -49,6 +59,7 @@ const PhoneScreen = () => {
 
 const styles = StyleSheet.create({
     root: {
+        height: height * 0.8,
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 20,
@@ -108,6 +119,7 @@ const styles = StyleSheet.create({
     testimonial: {
         color: 'white',
         marginTop: 10,
+        textAlign: 'center'
 
     }
 });

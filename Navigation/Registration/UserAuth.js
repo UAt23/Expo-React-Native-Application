@@ -1,8 +1,14 @@
 import * as React from 'react';
-import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
+
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 
 import Logo from '../../assets/registeration/kamyongo_logo.png';
 
@@ -17,37 +23,39 @@ const UserAuth = () => {
     const navigation = useNavigation();
 
     return (
-        <View style={[styles.root, {height: height}]}>
-            <Image 
-                source={Logo} 
-                style={[styles.logo, {height: height * 0.15},]} 
-                resizeMode="contain" 
-            />
-            <View style={styles.screenContent}>
-                <View style={styles.inputFields}>
-                    <View>
-                        <Text style={styles.headerTwo}>İsim </Text>
-                        <TextInput  style={styles.phoneInput}/>
+        <DismissKeyboard>
+            <View style={[styles.root, {height: height}]}>
+                <Image 
+                    source={Logo} 
+                    style={[styles.logo, {height: height * 0.15},]} 
+                    resizeMode="contain" 
+                />
+                <View style={styles.screenContent}>
+                    <View style={styles.inputFields}>
+                        <View>
+                            <Text style={styles.headerTwo}>İsim </Text>
+                            <TextInput  style={styles.phoneInput}/>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>Soyisim </Text>
+                            <TextInput  style={styles.phoneInput}/>
+                        </View>
+                        <View>
+                            <Text style={styles.headerTwo}>TC No </Text>
+                            <TextInput  
+                                style={styles.phoneInput}
+                                keyboardType= 'number-pad'
+                            />
+                        </View>
                     </View>
                     <View>
-                        <Text style={styles.headerTwo}>Soyisim </Text>
-                        <TextInput  style={styles.phoneInput}/>
+                        <Pressable onPress={onButtonPressed} style={styles.button}>
+                            <Text style={styles.buttonInner}>BAŞLA</Text>
+                        </Pressable>
                     </View>
-                    <View>
-                        <Text style={styles.headerTwo}>TC No </Text>
-                        <TextInput  
-                            style={styles.phoneInput}
-                            keyboardType= 'number-pad'
-                        />
-                    </View>
-                </View>
-                <View>
-                    <Pressable onPress={onButtonPressed} style={styles.button}>
-                        <Text style={styles.buttonInner}>BAŞLA</Text>
-                    </Pressable>
                 </View>
             </View>
-        </View>
+        </DismissKeyboard>
         
 
     );
