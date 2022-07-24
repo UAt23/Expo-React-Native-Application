@@ -1,7 +1,8 @@
-import * as React from 'react';
+import React, { useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { Dimensions } from 'react-native';
 
 
 const DismissKeyboard = ({ children }) => (
@@ -11,18 +12,42 @@ const DismissKeyboard = ({ children }) => (
 );
 
 import Logo from '../../assets/registeration/kamyongo_logo.png';
+const {width, height} = Dimensions.get('window');
 
 
 const ConfirmationCodeScreen = () => {
-    const {height} = useWindowDimensions();
-    const [code, setCode] = React.useState('');
+
+    const [confirmCode, setCode] = useState(null)
+
+    const navigation = useNavigation();
+    const route = useRoute();
+
+
 
     const onButtonPressed = () => {
 
-        navigation.navigate('UserAuth')
+        // fetch("http://44.206.43.168/api/verify_message", {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         tel_number: route.params.number,
+        //         code: confirmCode
+        //     }),
+        //     headers: {
+        //         'Content-type': 'application/json; charset=UTF-8',
+        //     }
+        // }).then(function(response){ 
+        //     return response.json()})
+        //     .then(function(data) {
+        //         if (data.status === "Success") {
+                    
+        //             navigation.navigate('UserAuth', {number_verified: route.params.number})
+                    
+        //         }
+        //     }).catch(error => console.error('Error:', error)); 
+            
+        navigation.navigate('UserAuth', {number_verified: route.params.number})
     }
 
-    const navigation = useNavigation();
 
     return (
         <DismissKeyboard>
@@ -33,11 +58,18 @@ const ConfirmationCodeScreen = () => {
                             <Text style={styles.headerTwo}>SMS ile gelen kodu giriniz</Text>
                             <TextInput 
                                 style={styles.phoneInput}
-                                keyboardType= 'number-pad'
+                                keyboardType= 'phone-pad'
+                                defaultValue={confirmCode}
+                                onChangeText={newCode => setCode(newCode)}
                             />
                         </View>
                         <View>
-                            <Pressable onPress={onButtonPressed} style={styles.button}>
+                            <Pressable onPress={onButtonPressed} style={({pressed}) => [{
+                                    backgroundColor: pressed 
+                                    ? '#81E47C'
+                                    : '#36d42d'
+                                },
+                                styles.button]}>
                                 <Text style={styles.buttonInner}>TAMAM</Text>
                             </Pressable>
                         </View>
@@ -88,17 +120,17 @@ const styles = StyleSheet.create({
         paddingLeft: 20
     },
     screenContent: {
-        flex: 0.85,
+        flex: 0.8,
         justifyContent: 'space-between',
         width: '80%',
         
     },
     button: {
-        backgroundColor: '#36d42d',
         alignItems: 'center',
         width: "100%",
         padding: 10,
         borderRadius: 12,
+        // marginBottom: 13
         
     },
     buttonInner: {

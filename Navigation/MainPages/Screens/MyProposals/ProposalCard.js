@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Dimensions } from 'react-native';
 
@@ -8,7 +8,14 @@ import locationLogo from '../../../../assets/loads/locationLogo.png';
 import weightLogo from '../../../../assets/loads/weightLogo.png';
 import minLogo from '../../../../assets/loads/minLogo.png';
 import inspectLogo from '../../../../assets/loads/inspectLogo.png';
-import Inspect from './Inspect';
+import ContentLoader from "react-native-easy-content-loader";
+import Inspect from '../Loads/Inspect';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { userOffers } from "../../../AsyncStorage";
+import ActivityIndicatorExample from '../../../ActivityIndicator';
+
+
 
 const LoadData = {
     date: '14 Haziran',
@@ -25,14 +32,18 @@ const LoadData = {
 
 const {width, height} = Dimensions.get('window');
 
-const LoadCard = ({data}) => {
+const ProposalCard = ({data}) => {
+    
+    const [isLoading, setLoading] = useState(false);
+    const [advert, setAdvert] = useState([]);
+    
+    
 
-    console.log("@@@@@@@@@@@@@@@@@"+data)
+    // console.log("@@@@@@@@@@@@@@@@@"+data)
     const navigation = useNavigation();
     const onInspectPressed = () => {
-        navigation.navigate('Inspect', {id: data[0], given: false})
+        navigation.navigate('Inspect', {id: data[0], given: true})
     }
-
     return (
         <Pressable style={({pressed}) => [{
             backgroundColor: pressed 
@@ -86,10 +97,10 @@ const LoadCard = ({data}) => {
     )
 }
 
+
 const styles = StyleSheet.create ({
     container: {
         width: width * 0.9,
-        // height: height * 0.14,
         borderRadius: 24,
         paddingLeft: 20,
         paddingRight: 20,
@@ -98,17 +109,23 @@ const styles = StyleSheet.create ({
         marginVertical: 15,
         
     },
+    loadsContainer: {
+        height: height * 0.1,
+        alignItems: 'flex-start', 
+        backgroundColor: '#eff0f7',
+        marginVertical: 15
+    },
     innerLines: {
         flexDirection: 'row',
         flex: 0,
         marginVertical: 1,
         alignItems: 'center'
-
+        
 
     },
     logos: {
         height: 25,
-        width:20,
+        width: 20,
 
     },
     text: {
@@ -119,18 +136,27 @@ const styles = StyleSheet.create ({
         fontFamily: 'ProximaNova_Bold'
 
     },
+    textLoader: {
+        marginLeft: 10,
+        color: '#16234e',
+        fontSize: 18,
+        fontWeight: '600',
+        fontFamily: 'ProximaNova_Bold'
+
+    },
     inspectButton: {
         flexDirection: 'row',
         backgroundColor: '#36d42d',
-        paddingLeft: Platform.OS === 'ios' ? 15 : 15,
-        paddingRight: Platform.OS === 'ios' ? 15 : 15,
-        paddingTop: Platform.OS === 'ios' ? 5 : 5,
-        paddingBottom: Platform.OS === 'ios' ? 5 : 5,
+        paddingLeft: Platform.OS === 'ios' ? 10 : 15,
+        paddingRight: Platform.OS === 'ios' ? 10 : 15,
+        paddingTop: Platform.OS === 'ios' ? 2 : 5,
+        paddingBottom: Platform.OS === 'ios' ? 2 : 5,
         borderRadius: 48,
         position: 'absolute',
-        right: Platform.OS === 'ios' ? 15 : 20,
-        bottom: Platform.OS === 'ios' ? 10 : 10,
+        right: Platform.OS === 'ios' ? 10 : 20,
+        bottom: Platform.OS === 'ios' ? 2 : 10,
         alignItems:'center',
+
         
     },
     inspectText: {
@@ -138,9 +164,12 @@ const styles = StyleSheet.create ({
         color: 'white',
         fontSize: 16,
         fontFamily: 'ProximaNova_Bold'
-
-
+    },
+    loader: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: width * 0.07
     }
 })
 
-export default LoadCard;
+export default ProposalCard;

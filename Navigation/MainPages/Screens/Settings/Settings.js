@@ -3,12 +3,28 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, TouchableWithoutFeedback, Keyboard, Switch} from 'react-native';
+import * as Location from 'expo-location';
 import PersonalInfo from './PersonalInfo';
 import Documents from './Documents';
 import NewCarInfo from './NewCarInfo';
 import CameraComponent from "./Camera"
-import LocationPermission from './Location';
+import AddNewCar from "./AddNewCar"
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Linking } from 'react-native';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from "expo-permissions"
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { savePermission } from "../../../AsyncStorage"
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: true,
+  }),
+});
 
 const DismissKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -20,12 +36,35 @@ const Settings = createStackNavigator();
 const {width, height} = Dimensions.get('window');
 
 const SettingsTab = () => {
+
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+    const [filter, setFilter] = useState("Seçilmedi");
+    const [errorMsg, setErrorMsg] = useState(null);
+    const [location, setLocation] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            const printer = async () => {
+                let auth = await AsyncStorage.getItem("permission").then(userToken => {
+                    const state = userToken;
+                setIsEnabled(JSON.parse(state));
+                return state;
+            })
+            
+            
+            }
+            printer()
+        });
+        return unsubscribe
+    }, [navigation, location]);
     
     const navigation = useNavigation();
     
     const route = useRoute();
-
-    // console.log('HEYY ' + route.params?.location)
+    
+    console.log(isEnabled)
 
     const onInfoPressed = () => {
         navigation.navigate('PersonalInfo')
@@ -37,33 +76,103 @@ const SettingsTab = () => {
         navigation.navigate('NewCarInfo')
     }
     
-    const onLocationPressed = () => {
-        navigation.navigate('Location')
+    const onLocationPressed = async () => {
+        let { statusLocation } = await Location.requestForegroundPermissionsAsync();
+        if (statusLocation !== 'granted') {
+            setErrorMsg('Permission to access location was denied');
+        }
+        setIsEnabled(!isEnabled)
+        savePermission(JSON.stringify(!isEnabled))
         
+        // Permissions.getAsync(Permissions.NOTIFICATIONS).then((statusObj) => {
+        //     if (statusObj.status !== "granted") {
+        //     return Permissions.askAsync(Permissions.NOTIFICATIONS)
+        //     }
+        //     return statusObj;
+        //     }).then((statusObj) => {
+        //     if (statusObj.status !== "granted") {
+        //     return;
+        //     }
+        //     })
+
+        await Notifications.scheduleNotificationAsync({
+            content: {
+            title: "You’ve got mail! 📬",
+            body: "Here is the notification body",
+            data: { data: "goes here" },
+            },
+            trigger: null,
+        });
+    
+
+        // let token;
+        // if (Device.isDevice) {
+        //     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        //     let finalStatus = existingStatus;
+        //     if (existingStatus !== 'granted') {
+        //         const { status } = await Notifications.requestPermissionsAsync();
+        //         finalStatus = status;
+        //     }
+        //     if (finalStatus !== 'granted') {
+        //         alert('Failed to get push token for push notification!');
+        //         return;
+        //     }
+        //     token = (await Notifications.getExpoPushTokenAsync()).data;
+        //     console.log(token);
+        // } else {
+        //     alert('Must use physical device for Push Notifications');
+        // }
+
+        // if (Platform.OS === 'android') {
+        //     Notifications.setNotificationChannelAsync('default', {
+        //         name: 'default',
+        //         importance: Notifications.AndroidImportance.MAX,
+        //         vibrationPattern: [0, 250, 250, 250],
+        //         lightColor: '#FF231F7C',
+        //     });
+        // }
+            
+
     }
     const onHelpPressed = () => {
-        
+        Linking.openURL('mailto:kamyongoiletisim@gmail.com?subject=Yardım&body=Sorun/Dileğinizi bizimle buradan paylaşabilirsiniz.') 
     }
     
 
     return (
         <View style={[styles.root]}>
             <View style={styles.screenContent}>
-                <View style={{flex: 0.50, justifyContent: 'space-between'}}>
-                    <Pressable onPress={onInfoPressed}>
-                        <Text style={styles.headerTwo}>Kişisel Bilgiler</Text>
+                <View style={{flex: 0.55, justifyContent: 'space-evenly'}}>
+                    <Pressable children={({pressed}) => (
+                            <Text style={[{color: pressed ? "#BDBEC7" : "#16234e"},styles.headerTwo]}>Kişisel Bilgiler</Text>
+                        )} onPress={onInfoPressed}>
                     </Pressable>
-                    <Pressable onPress={onDocumentsPressed}>
-                        <Text style={styles.headerTwo}>Belgelerim</Text>
+                    <Pressable children={({pressed}) => (
+                            <Text style={[{color: pressed ? "#BDBEC7" : "#16234e"},styles.headerTwo]}>Belgelerim</Text>
+                        )} onPress={onDocumentsPressed}>
                     </Pressable>
-                    <Pressable onPress={onCarInfoPressed}>
-                        <Text style={styles.headerTwo}>Araç Bilgileri</Text>
+                    <Pressable children={({pressed}) => (
+                            <Text style={[{color: pressed ? "#BDBEC7" : "#16234e"},styles.headerTwo]}>Araç Bilgileri</Text>
+                        )} onPress={onCarInfoPressed}>
                     </Pressable>
-                    <Pressable onPress={onLocationPressed}>
-                        <Text style={styles.headerTwo}>Bana özel ilan getir.</Text>
+                    <Pressable children={({pressed}) => (
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                                <Text style={[{color: pressed ? "#BDBEC7" : "#16234e"},styles.headerTwo]}>Bana özel ilan getir.</Text>
+                                <Switch
+                                    style={{marginRight: 25}}
+                                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                                    thumbColor={isEnabled ? "#16234e" : "#f4f3f4"}
+                                    ios_backgroundColor="#3e3e3e"
+                                    onValueChange={onLocationPressed}
+                                    value={isEnabled}
+                                />
+                            </View>
+                            
+                        )} onPress={onLocationPressed}>
                     </Pressable>
-                    <Pressable onPress={onHelpPressed}>
-                        <Text style={styles.headerTwo}>Yardım</Text>
+                    <Pressable children={({pressed}) => (
+                            <Text style={[{color: pressed ? "#BDBEC7" : "#16234e"},styles.headerTwo]}>Yardım</Text>
+                        )} onPress={onHelpPressed}>
                     </Pressable>
                     
                 </View>
@@ -72,157 +181,102 @@ const SettingsTab = () => {
     )
 }
 
-const AddNewCar = () => {
-
-    const navigation = useNavigation();
-
-    const openCamera = () => {
-        navigation.navigate('CameraComponent')
-    }
-
-    return (
-        (
-            <DismissKeyboard>
-                <ScrollView>
-                    <View style={styles.carInfoRoot}>
-                        <View style={styles.screenContent}>
-                            <View>
-                                <Text style={styles.headerTwo}>Araç Plakası</Text>
-                                <TextInput 
-                                    style={styles.Input}
-                                    keyboardType= 'number-pad'
-                                    />
-                            </View>
-                            <View>
-                                <Text style={styles.headerTwo}>Araç Markası</Text>
-                                <TextInput 
-                                    style={styles.Input}
-                                    keyboardType= 'number-pad'
-                                    />
-                            </View>
-                            <View>
-                                <Text style={styles.headerTwo}>Model Yılı</Text>
-                                <TextInput 
-                                    style={styles.Input}
-                                    keyboardType= 'number-pad'
-                                    />
-                            </View>
-                            <View>
-                                <Text style={styles.headerTwo}>Azami Yüklü Ağırlık(Ton)</Text>
-                                <TextInput 
-                                    style={styles.Input}
-                                    keyboardType= 'number-pad'
-                                    />
-                            </View>
-                            <View>
-                                <Text style={styles.headerTwo}>Araç Tipi</Text>
-                                <TextInput 
-                                    style={styles.Input}
-                                    keyboardType= 'number-pad'
-                                    />
-                            </View>
-                            <View>
-                                <Text style={styles.headerTwo}>Dorse Tipi</Text>
-                                <TextInput 
-                                    style={styles.Input}
-                                    keyboardType= 'number-pad'
-                                    />
-                            </View>
-                            <View>
-                                <Text style={styles.headerTwo}>Ruhsat</Text>
-                                <View style={styles.buttonRows}>
-                                    <Pressable  style={styles.buttonSecond}>
-                                        <Text style={styles.buttonInnerSecond} onPress={openCamera}>+Sayfa 1 Yükle</Text>
-                                    </Pressable>
-                                    <Pressable  style={styles.buttonSecond}>
-                                        <Text style={styles.buttonInnerSecond} onPress={openCamera}>+Sayfa 2 Yükle</Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                            <View style={{marginVertical: 10,}}>
-                                <View style={styles.buttonRows}>
-                                    <Text style={styles.headerTwo}>Sigorta Poliçesi</Text>
-                                    <Pressable  style={styles.buttonSecond}>
-                                        <Text style={styles.buttonInnerSecond}>+ Yükle</Text>
-                                    </Pressable>
-                                </View>
-                                <View style={styles.buttonRows}>
-                                    <Text style={styles.headerTwo}>Muayene</Text>
-                                    <Pressable  style={styles.buttonSecond}>
-                                        <Text style={styles.buttonInnerSecond}>+ Yükle</Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={styles.screenButton}>
-                            <Pressable  style={styles.button}>
-                                <Text style={styles.buttonInner}>TAMAM</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </ScrollView>    
-            </DismissKeyboard>
-        )
-    )
-}
 
 export default function SettingsScreen({navigation}) {
 
     
     return(
-        <Settings.Navigator>
-                <Settings.Screen
-                    name="SettingsTab"
-                    component={SettingsTab}
-                    options={{headerShown: false}}
-                />
-                <Settings.Screen
-                    name="PersonalInfo"
-                    component={PersonalInfo}
-                    options={{headerShown: true, 
-                        headerStyle: {backgroundColor: '#16234e'}, 
-                        headerTitleStyle: {color: 'white'},
-                        headerTintColor: 'white',
-                    }}
-                />
-                <Settings.Screen
-                    name="Documents"
-                    component={Documents}
-                    options={{headerShown: true, 
-                        headerStyle: {backgroundColor: '#16234e'}, 
-                        headerTitleStyle: {color: 'white'},
-                        headerTintColor: 'white',
-                    }}
-                />
-                <Settings.Screen
-                    name="NewCarInfo"
-                    component={NewCarInfo}
-                    options={{headerShown: true, 
-                        headerStyle: {backgroundColor: '#16234e'}, 
-                        headerTitleStyle: {color: 'white'},
-                        headerTintColor: 'white',
-                    }}
-                />
-                <Settings.Screen
-                    name="AddNewCar"
-                    component={AddNewCar}
-                    options={{headerShown: true, 
-                        headerStyle: {backgroundColor: '#16234e'}, 
-                        headerTitleStyle: {color: 'white'},
-                        headerTintColor: 'white',
-                    }}
-                />
-                <Settings.Screen
-                    name="CameraComponent"
-                    component={CameraComponent}
-                    options={{headerShown: false}}
-                />
-                <Settings.Screen
-                    name="Location"
-                    component={LocationPermission}
-                    options={{headerShown: false}}
-                />
-        </Settings.Navigator>
+        <SafeAreaProvider>
+
+            <Settings.Navigator>
+                    <Settings.Screen
+                        name="SettingsTab"
+                        component={SettingsTab}
+                        options={{headerShown: false}}
+                    />
+                    <Settings.Screen
+                        name="PersonalInfo"
+                        component={PersonalInfo}
+                        options={{headerShown: true, 
+                            headerStyle: {backgroundColor: '#16234e'}, 
+                            headerTitleStyle: {color: 'white'},
+                            headerTintColor: 'white',
+                            title: 'Kişisel Bilgiler ',
+                            headerTitleAlign: 'center',
+                            headerTitleStyle: {
+                                fontSize: 18,
+                                fontWeight: '600',
+                                color: 'white',
+                                textAlign: 'center',
+                                fontFamily: 'ProximaNova_Bold'
+                            },
+                            headerBackTitleVisible: false
+                        }}
+                    />
+                    <Settings.Screen
+                        name="Documents"
+                        component={Documents}
+                        options={{headerShown: true, 
+                            headerStyle: {backgroundColor: '#16234e'}, 
+                            headerTitleStyle: {color: 'white'},
+                            headerTintColor: 'white',
+                            title: 'Belgelerim',
+                            headerTitleAlign: 'center',
+                            headerTitleStyle: {
+                                fontSize: 18,
+                                fontWeight: '600',
+                                color: 'white',
+                                textAlign: 'center',
+                                fontFamily: 'ProximaNova_Bold'
+                            },
+                            headerBackTitleVisible: false
+                        }}
+                    />
+                    <Settings.Screen
+                        name="NewCarInfo"
+                        component={NewCarInfo}
+                        options={{headerShown: true, 
+                            headerStyle: {backgroundColor: '#16234e'}, 
+                            headerTitleStyle: {color: 'white'},
+                            headerTintColor: 'white',
+                            title: 'Araç Bilgileri ',
+                            headerTitleAlign: 'center',
+                            headerTitleStyle: {
+                                fontSize: 18,
+                                fontWeight: '600',
+                                color: 'white',
+                                textAlign: 'center',
+                                fontFamily: 'ProximaNova_Bold'
+                            },
+                            headerBackTitleVisible: false
+                        }}
+                    />
+                    <Settings.Screen
+                        name="AddNewCar"
+                        component={AddNewCar}
+                        options={{headerShown: true, 
+                            headerStyle: {backgroundColor: '#16234e'}, 
+                            headerTitleStyle: {color: 'white'},
+                            headerTintColor: 'white',
+                            title: 'Yeni Araç Ekle ',
+                            headerTitleAlign: 'center',
+                            headerTitleStyle: {
+                                fontSize: 18,
+                                fontWeight: '600',
+                                color: 'white',
+                                textAlign: 'center',
+                                fontFamily: 'ProximaNova_Bold'
+                            },
+                            headerBackTitleVisible: false
+                        }}
+                    />
+                    <Settings.Screen
+                        name="CameraComponent"
+                        component={CameraComponent}
+                        options={{headerShown: false}}
+                    />
+            </Settings.Navigator>
+        </SafeAreaProvider>
     )
 }
 
@@ -231,11 +285,10 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         height: height * 1.05,
         width: width,
-        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
         backgroundColor: "#eff0f7",
-        paddingTop: 20,
+        paddingTop: 10,
     },
     root: {
         height: height,
@@ -252,14 +305,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 4,
         fontWeight: "500",
+        fontFamily: 'ProximaNova_Bold'
+
     },
     headerTwo: {
-        color: "#16234e",
         fontSize: 18,
         padding: 4,
         marginRight: 10,
         marginLeft: 10,
         fontWeight: "500",
+        fontFamily: 'ProximaNova_Bold'
+
     },
     headerThree: {
         color: "#16234e",
@@ -269,6 +325,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         fontWeight: "500",
         textAlign: 'center',
+        fontFamily: 'ProximaNova_Bold'
+
     },
     phoneInput: {
         backgroundColor: "white",
@@ -301,6 +359,8 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '600',
         fontSize: 24,
+        fontFamily: 'ProximaNova_Bold'
+
         
 
     },

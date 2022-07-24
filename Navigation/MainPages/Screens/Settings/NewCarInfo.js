@@ -1,7 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Dimensions } from 'react-native';
-import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, TextInput, } from 'react-native';
+import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, TextInput, ScrollView} from 'react-native';
+import VehicleCard from './VehicleCard';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import ActivityIndicatorExample from '../../../ActivityIndicator';
 
 const {width, height} = Dimensions.get('window');
 
@@ -10,30 +13,77 @@ const {width, height} = Dimensions.get('window');
 
 const NewCarInfo = () => {
     const navigation = useNavigation();
+
+    const [vehicles, setVehicles] = useState(null)
+    const [authKey, setAuth] = useState();
+    const [isLoading, setLoading] = useState(true);
+    
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            const printer = async () => {
+                let auth = await AsyncStorage.getItem("token").then(userToken => {
+                    const state = userToken;
+                    return state;
+                })
+                
+                fetch("http://44.206.43.168/api/get_vehicles", {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json; charset=utf-8',
+                            "Authorization": auth
+                        }
+                    }).then(function(response){ 
+                        return response.json()})
+                    .then(function(data) {
+                        setLoading(false)
+                        if (data.status === "Success") {
+                            setVehicles(data.vehicles)
+    
+                        }
+                    }).catch(error => console.error('Error:', error));
+            }
+
+            printer()
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    const Vehicles = () => {
+        let current = [];
+        if(vehicles !== null){
+            vehicles.filter((vehicle, index) => {
+                return current.push(<VehicleCard key={index} data={vehicle}/>)
+            })
+        } else return(<Text>Kayıtlı Araç Bulunamadı</Text>)
+        return current
+    }
+
     const newCarInfo = () => {
-        navigation.navigate('AddNewCar')
+        navigation.navigate('AddNewCar', {vehicleId: null, value: {type: "none", pic: null}})
+    }
+    if (isLoading) {
+        return <ActivityIndicatorExample/>
     }
     return (
-        (
-            <View>
-                <View style={styles.root}>
-                    <View style={styles.screenContent}>
-                        <View style={styles.carInfoContainer}>
-                            <View style={styles.innerLines}>
-                                <Text style={styles.text} >54 HD 313</Text>
-                                <Text style={styles.text} >Tır</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.screenButton}>
-                        <Pressable onPress={newCarInfo} style={styles.button}>
-                            <Text style={styles.buttonInner}>Yeni Araç Ekle</Text>
-                        </Pressable>
-                    </View>
-                </View>
+        <View style={styles.root}>
+            <ScrollView style={styles.screenContent}>
+                <Vehicles/>               
+            </ScrollView>
+            <View style={styles.screenButton}>
+                <Pressable onPress={newCarInfo} style={({pressed}) => [{
+                    backgroundColor: pressed 
+                    ? '#8BE686'
+                    : '#36d42d'
+                }
+                ,styles.button]}>
+                    <Text style={styles.buttonInner}>Yeni Araç Ekle</Text>
+                </Pressable>
             </View>    
+        </View>
         )
-    )
+    
 }
 
 
@@ -44,43 +94,13 @@ const styles = StyleSheet.create ({
         flexDirection: "column",
         height: height * 0.88,
         width: width,
-        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
         backgroundColor: "#eff0f7",
         paddingTop: 20,
     },
-    container: {
-        width: width * 0.9,
-        justifyContent: 'space-evenly',
-        backgroundColor: 'white',
-        borderRadius: 12,
-        paddingLeft: 10,
-        paddingRight: 0,
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginVertical: 5,
-        
-    },
-    carInfoContainer: {
-        justifyContent: 'space-evenly',
-        backgroundColor: 'white',
-        borderRadius: 12,
-        paddingLeft: 10,
-        paddingRight:20,
-        paddingTop: 5,
-        paddingBottom: 5,
-        marginVertical: 5,
-        
-    },
-    innerLines: {
-        flexDirection: 'row',
-        justifyContent: "space-between",
-        marginVertical: 10,
-    },
     screenContent: {
         flex: 0.8,
-        justifyContent: 'space-between',
         width: '85%',
         
     },
@@ -91,22 +111,25 @@ const styles = StyleSheet.create ({
         marginRight: 10,
         marginLeft: 10,
         fontWeight: "500",
+        fontFamily: 'ProximaNova_Bold'
+
     },
     text: {
         marginLeft: 10,
         color: '#16234e',
         fontSize: 16,
         fontWeight: '600',
+        fontFamily: 'ProximaNova_Bold'
+
     },
     screenButton: {
         flex: 0.1,
         justifyContent: 'flex-end',
         width: '80%',
-        marginBottom: 10,
+        marginBottom: Platform.OS === 'ios' ? 50 : 0,
         
     },
     button: {
-        backgroundColor: '#36d42d',
         alignItems: 'center',
         width: "100%",
         padding: 10,
@@ -117,6 +140,8 @@ const styles = StyleSheet.create ({
         color: 'white',
         fontWeight: '600',
         fontSize: 24,
+        fontFamily: 'ProximaNova_Bold'
+
     },
 })
 

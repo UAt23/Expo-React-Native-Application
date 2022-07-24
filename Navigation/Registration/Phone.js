@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable, Keyboard,  TouchableWithoutFeedback} from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -16,13 +16,60 @@ const DismissKeyboard = ({ children }) => (
 
 const PhoneScreen = () => {
     const {height} = useWindowDimensions();
+    const [phoneNumber, setNumber] = useState(null);
+    const [phoneSet, setPhone] = useState(false);
+    const [verificationCode, setCode] = useState(null);
 
-    const onButtonPressed = () => {
-        navigation.navigate('ConfirmationCode')
+    const onVerifyButtonPressed = () => {
+        // fetch("http://44.206.43.168/api/send_verification_message", {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         tel_number: phoneNumber
+        //     }),
+        //     headers: {
+        //         'Content-type': 'application/json; charset=UTF-8',
+        //     }
+        // }).then(function(response){ 
+        //     return response.json()})
+        //     .then(function(data) {
+        //         console.log(data)
+        //         if (data.status === "Success") {
+        //             setPhone(true)
+        //         }
+        //     }).catch(error => console.error('Error:', error)); 
+                        
+                        
+        setPhone(true)
+    }
+
+    const onConfirmButtonPressed = () => {
+
+        // fetch("http://44.206.43.168/api/verify_message", {
+        //     method: 'POST',
+        //     body: JSON.stringify({
+        //         tel_number: phoneNumber,
+        //         code: verificationCode
+        //     }),
+        //     headers: {
+        //         'Content-type': 'application/json; charset=UTF-8',
+        //     }
+        // }).then(function(response){ 
+        //     return response.json()})
+        //     .then(function(data) {
+        //         if (data.status === "Success") {
+                    
+        //             navigation.navigate('UserAuth', {number_verified: phoneNumber})
+                    
+        //         }
+        //     }).catch(error => console.error('Error:', error)); 
+            
+        navigation.navigate('UserAuth', {number_verified: phoneNumber})
     }
 
     const navigation = useNavigation();
     
+    
+
     return (
         <DismissKeyboard>
             <View style={[styles.root, {height: height}]}>
@@ -34,16 +81,34 @@ const PhoneScreen = () => {
                 <View style={styles.screenContent}>
                     <Text style={styles.headerOne}>Türkiye'nin en gelişmiş kamyoncu platformu </Text>
                     <View style={{flex: 0.8, justifyContent: 'space-between'}}>
+                        {phoneSet
+                        ?   <View>
+                                <Text style={styles.headerTwo}>SMS ile gelen kodu giriniz</Text>
+                                <TextInput 
+                                    style={styles.phoneInput}
+                                    keyboardType= 'phone-pad'
+                                    defaultValue={verificationCode}
+                                    onChangeText={newCode => setCode(newCode)}
+                                />
+                            </View>
+                        :    <View>
+                                <Text style={styles.headerTwo}>Telefon numaranızı giriniz: </Text>
+                                <TextInput 
+                                    placeholder='(+90553__)'  
+                                    style={styles.phoneInput}
+                                    keyboardType= 'phone-pad'
+                                    defaultValue={phoneNumber}
+                                    onChangeText={newNumber => setNumber(newNumber)}
+                                />
+                            </View>
+                        }
                         <View>
-                            <Text style={styles.headerTwo}>Telefon numaranızı giriniz: </Text>
-                            <TextInput 
-                                placeholder='(0553__)'  
-                                style={styles.phoneInput}
-                                keyboardType= 'number-pad'
-                            />
-                        </View>
-                        <View>
-                            <Pressable onPress={onButtonPressed} style={styles.button}>
+                            <Pressable onPress={phoneSet ? onConfirmButtonPressed : onVerifyButtonPressed} style={({pressed}) => [{
+                                    backgroundColor: pressed 
+                                    ? '#81E47C'
+                                    : '#36d42d'
+                                },
+                                styles.button]}>
                                 <Text style={styles.buttonInner}>TAMAM</Text>
                             </Pressable>
                             <Text style={styles.testimonial}>*Kullanıcı sözleşmesini kabul ediyorum</Text>
@@ -79,6 +144,7 @@ const styles = StyleSheet.create({
         fontSize: Platform.OS === 'ios' ? 22 : 24,
         textAlign: 'center',
         padding: 4,
+        fontFamily: 'ProximaNova_Bold',
         fontWeight: "300",
     },
     headerTwo: {
@@ -88,6 +154,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginLeft: 10,
         fontWeight: "300",
+        fontFamily: 'ProximaNova_Bold',
     },
     phoneInput: {
         backgroundColor: "white",
@@ -99,10 +166,8 @@ const styles = StyleSheet.create({
         flex: 0.8,
         justifyContent: 'space-between',
         width: '80%',
-        
     },
     button: {
-        backgroundColor: '#36d42d',
         alignItems: 'center',
         width: "100%",
         padding: 10,
@@ -113,12 +178,14 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '600',
         fontSize: 24,
+        fontFamily: 'ProximaNova_Bold',
         
 
     },
     testimonial: {
         color: 'white',
         marginTop: 10,
+        fontFamily: 'ProximaNova_Bold',
         textAlign: 'center'
 
     }

@@ -8,14 +8,15 @@ import ActivityIndicatorExample from '../../../ActivityIndicator';
 
 const {width, height} = Dimensions.get('window');
 
-const Documents = () => {
+const Complete = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const [statuses, setStatuses] = useState([null]);
     const [authKey, setAuth] = useState();
     const [isLoading, setLoading] = useState(true);
+    
     useEffect(() => {
-        
+
         const printer = async () => {
             let auth = await AsyncStorage.getItem("token").then(userToken => {
                 const state = userToken;
@@ -23,11 +24,11 @@ const Documents = () => {
             })
             console.log(auth)
             setAuth(auth)
-            
+
         }
         printer()
     }, []);
-    
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             const printer = async () => {
@@ -35,11 +36,10 @@ const Documents = () => {
                     const state = userToken;
                     return state;
                 })
-                
                 fetch(`http://44.206.43.168/api/get_user_documents_statuses`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-type': 'application/json; charset=utf-8',
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8',
                     "Authorization": auth
                 }
                 }).then(function(response){ 
@@ -49,16 +49,17 @@ const Documents = () => {
                         if (data.status === "Success") {
                             setStatuses(data.document_statuses)
                         }
-                    }).catch(error => console.error('Error:', error));
+                }).catch(error => console.error('Error:', error));
+                
             }
 
             printer()
-            
+
         });
-        
+
         return unsubscribe;
     }, [navigation]);
-    
+
     const openCamera = (doc) => {
         let tempDocSelection = doc
         navigation.navigate('CameraComponent', {doc: tempDocSelection})
@@ -78,9 +79,16 @@ const Documents = () => {
             statusStyle.push(styles.statusText)
             
         }
-        
+
     })     
-    
+
+    const carPage = () => {
+        navigation.navigate('NewCarInfo')
+    }
+
+    const newCarPage = () => {
+        navigation.navigate('AddNewCar')
+    }
     if (isLoading) {
         return <ActivityIndicatorExample/>
     }
@@ -90,7 +98,7 @@ const Documents = () => {
                 <View style={{marginBottom: 20}}>
                     <Text style={styles.sectionHeader}>Kişisel Belgeler</Text>
                     <View style={styles.container}>
-                        <Pressable onPress={() => {openCamera("ehliyet_on")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Ehliyet Ön Yüz</Text>
                             <Text style={statusStyle[0]} >{statusText[0]}</Text>
                         </Pressable>
@@ -100,7 +108,7 @@ const Documents = () => {
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <Pressable onPress={() => {openCamera("ehliyet_arka")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Ehliyet Arka Yüz</Text>
                             <Text style={statusStyle[1]} >{statusText[1]}</Text>
                         </Pressable>
@@ -110,7 +118,7 @@ const Documents = () => {
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <Pressable onPress={() => {openCamera("psikoteknik")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Psikoteknik</Text>
                             <Text style={statusStyle[2]} >{statusText[2]}</Text>
                         </Pressable>
@@ -120,7 +128,7 @@ const Documents = () => {
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <Pressable onPress={() => {openCamera("src")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >SRC</Text>
                             <Text style={statusStyle[3]} >{statusText[3]}</Text>
                         </Pressable>
@@ -129,7 +137,7 @@ const Documents = () => {
                 <View>
                     <Text style={styles.sectionHeader}>Firma Belgeleri</Text>
                     <View style={styles.container}>
-                        <Pressable onPress={() => {openCamera("fatura_ornegi")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Fatura Örneği</Text>
                             <Text style={statusStyle[4]} >{statusText[4]}</Text>
                         </Pressable>
@@ -139,7 +147,7 @@ const Documents = () => {
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <Pressable onPress={() => {openCamera("yetki_belgesi")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Yetki Belgesi</Text>
                             <Text style={statusStyle[5]} >{statusText[5]}</Text>
                         </Pressable>
@@ -149,24 +157,36 @@ const Documents = () => {
                                 borderBottomWidth: 1,
                             }}
                         />
-                        <Pressable onPress={() => {openCamera("vergi_levhasi")}} style={styles.innerLines}>
+                        <Pressable onPress={openCamera} style={styles.innerLines}>
                             <Text style={styles.text} >Vergi Levhası</Text>
                             <Text style={statusStyle[6]} >{statusText[6]}</Text>
                         </Pressable>
                     </View>
-                </View>  
+                </View> 
+                <View>
+                    <Pressable onPress={carPage} >
+                        <Text style={styles.textBottom} >Araç Belgeleri</Text>
+                    </Pressable>
+                    <Pressable onPress={newCarPage} >
+                        <Text style={styles.textBottom} >Yeni Araç</Text>
+                    </Pressable>
+                </View>
+            </View >
+            <View style={styles.screenButton}>
+                <Pressable  style={styles.button}>
+                    <Text style={styles.buttonInner}>Gönder</Text>
+                </Pressable>
             </View>
         </View>
     )
 }
 
-export default Documents
-
+export default Complete
 
 const styles = StyleSheet.create ({
     root: {
         flexDirection: "column",
-        height: height,
+        height: height * 0.89,
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
@@ -197,17 +217,23 @@ const styles = StyleSheet.create ({
         marginLeft: 10,
         color: '#16234e',
         fontSize: 16,
+        fontFamily: 'ProximaNova_Bold',
         fontWeight: '600',
-        fontFamily: 'ProximaNova_Bold'
-
+    },
+    textBottom: {
+        marginLeft: 10,
+        color: 'gray',
+        fontSize: 22,
+        fontFamily: 'ProximaNova_Bold',
+        fontWeight: '700',
+        marginVertical: 5,
     },
     sectionHeader: {
         marginLeft: 20,
         color: '#737378',
         fontSize: 16,
+        fontFamily: 'ProximaNova_Bold',
         fontWeight: '600',
-        fontFamily: 'ProximaNova_Bold'
-
     },
     statusText: {
         marginRight: 15,
@@ -220,12 +246,14 @@ const styles = StyleSheet.create ({
         marginRight: 15,
         color: 'orange',
         fontSize: 16,
+        fontFamily: 'ProximaNova_Bold',
         fontWeight: '600',
     },
     statusTextGreen: {
         marginRight: 15,
         color: 'green',
         fontSize: 16,
+        fontFamily: 'ProximaNova_Bold',
         fontWeight: '600',
     },
     inspectButton: {
@@ -246,5 +274,25 @@ const styles = StyleSheet.create ({
         color: 'white',
         fontSize: 16,
 
-    }
+    },
+    screenButton: {
+        // flex: 0.1,
+        alignSelf: 'center',
+        width: '80%',
+        marginBottom: Platform.OS === 'ios' ? 80 : 0,
+    },  
+    button: {
+        backgroundColor: '#36d42d',
+        alignItems: 'center',
+        width: "100%",
+        padding: 10,
+        borderRadius: 12,
+        
+    },
+    buttonInner: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 24,
+        
+    },
 })

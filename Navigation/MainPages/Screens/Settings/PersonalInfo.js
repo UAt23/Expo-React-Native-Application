@@ -1,25 +1,68 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dimensions } from 'react-native';
 import { View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import ActivityIndicatorExample from '../../../ActivityIndicator';
+
 
 const {width, height} = Dimensions.get('window');
 
 const PersonalInfo = () => {
+
+    const navigation = useNavigation();
+    const [userInfo, setUserrInfo] = useState([null]);
+    const [isLoading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            const printer = async () => {
+                let auth = await AsyncStorage.getItem("token").then(userToken => {
+                    const state = userToken;
+                    return state;
+                })
+                fetch("http://44.206.43.168/api/get_personal_info", {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json; charset=utf-8',
+                            "Authorization": auth
+                        }
+                    }).then(function(response){ 
+                        return response.json()})
+                        .then(function(data) {
+                            setLoading(false)
+                            if (data.status === "Success") {
+                                console.log(data.personal_info)
+                                setUserrInfo(data.personal_info)
+                            }
+                        }).catch(error => console.error('Error:', error));
+            }
+
+            printer()
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    if (isLoading) {
+        return <ActivityIndicatorExample/>
+    }
     return (
         <View style={[styles.root]}>
                 <View style={styles.screenContent}>
-                    <View style={{flex: 0.50, justifyContent: 'space-between'}}>
-                        <View >
+                    <View style={{flex: 0.50, justifyContent: 'space-between', flexDirection: 'row', width: width * 0.9}}>
+                        <View style={{justifyContent: 'space-between'}}>
                             <Text style={styles.headerTwo}>İsim:</Text>
+                            <Text style={styles.headerTwo}s>Soyisim:</Text>
+                            <Text style={styles.headerTwo}s>Telefon No:</Text>
+                            <Text style={styles.headerTwo}s>TC no:</Text>                            
                         </View>
-                        <View>
-                            <Text style={styles.headerTwo}>Soyisim:</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.headerTwo}>Telefon No:</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.headerTwo}>TC no:</Text>
+                        <View style={{justifyContent: 'space-between'}}>
+                            <Text style={styles.headerTwo}>{userInfo[1]}</Text>
+                            <Text style={styles.headerTwo}>{userInfo[2]}</Text>
+                            <Text style={styles.headerTwo}>{userInfo[4]}</Text>
+                            <Text style={styles.headerTwo}>{userInfo[3]}</Text>                           
                         </View>
                     </View>
                 </View>
@@ -50,7 +93,10 @@ const styles = StyleSheet.create({
         padding: 4,
         marginRight: 10,
         marginLeft: 10,
+        marginVertical: 5,
         fontWeight: "500",
+        fontFamily: 'ProximaNova_Bold'
+
     },
     headerThree: {
         color: "#16234e",
